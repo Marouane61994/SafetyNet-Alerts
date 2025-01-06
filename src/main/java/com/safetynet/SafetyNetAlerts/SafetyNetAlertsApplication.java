@@ -3,6 +3,7 @@ package com.safetynet.SafetyNetAlerts;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+
 @SpringBootApplication
 public class SafetyNetAlertsApplication {
 
