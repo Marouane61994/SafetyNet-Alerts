@@ -2,6 +2,7 @@ package com.safetynet.SafetyNetAlerts.Service;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
@@ -34,7 +35,6 @@ public class DataLoaderService {
     public DataLoaderService() {
 
         ObjectMapper objectMapper = new ObjectMapper();
-
         // Enregistrer le module JavaTimeModule pour gérer LocalDate
         JavaTimeModule module = new JavaTimeModule();
 
@@ -44,6 +44,7 @@ public class DataLoaderService {
         objectMapper.registerModule(module);
 
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
 
         try (InputStream inputStream = getClass().getResourceAsStream("/data.json")) {
             dataModel = objectMapper.readValue(inputStream, DataModel.class);
