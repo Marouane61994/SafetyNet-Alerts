@@ -3,17 +3,18 @@ package com.safetynet.SafetyNetAlerts.Controller;
 
 import com.safetynet.SafetyNetAlerts.Model.PersonModel;
 import com.safetynet.SafetyNetAlerts.Service.PersonService;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@Data
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/person")
 public class PersonController {
-    @Autowired
-    private PersonService personService;
+
+    private final PersonService personService;
 
     @GetMapping
     public List<PersonModel> getAllPersons() {
@@ -28,5 +29,10 @@ public class PersonController {
     @DeleteMapping
     public void deletePerson(@RequestBody PersonModel person) {
         personService.delete(person);
+    }
+
+    @PutMapping
+    public void updatePerson(@RequestBody PersonModel person) {
+        personService.update(person);
     }
 }

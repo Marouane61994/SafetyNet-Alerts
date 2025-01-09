@@ -8,6 +8,6 @@ import java.util.List;
 public class DataModel {
 
     private List<PersonModel> persons;
-    private List<FireStationModel> firestations;
-    private  List<MedicalRecordModel> medicalrecords;
+    private List<FireStationModel> fireStation;
+    private  List<MedicalRecordModel> medicalRecord;
 }
