@@ -3,39 +3,45 @@ package com.safetynet.SafetyNetAlerts.Repository;
 
 import com.safetynet.SafetyNetAlerts.Model.PersonModel;
 import com.safetynet.SafetyNetAlerts.Service.DataLoaderService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
+@RequiredArgsConstructor
 @Repository
 public class PersonRepository {
-    @Autowired
-    private DataLoaderService dataLoaderService;
+
+    private final DataLoaderService dataLoaderService;
+
 
     public List<PersonModel> findAll() {
-        return dataLoaderService.getPersons();
-
+        return dataLoaderService.getDataModel().getPersons();
+    }
+    public Optional<PersonModel> findByFullName(String firstName, String lastName) {
+        return dataLoaderService.getDataModel().getPersons()
+                .stream()
+                .filter(person -> person.getFirstName().equalsIgnoreCase(firstName)
+                        && person.getLastName().equalsIgnoreCase(lastName))
+                .findFirst();
     }
 
-    public void save(PersonModel person) {
-        dataLoaderService.getPersons().add(person);
+    public PersonModel save(PersonModel person) {
+        List<PersonModel> persons = findAll();
+        persons.add(person);
+        dataLoaderService.getDataModel().setPersons(persons);
+        return person;
     }
 
-    public void delete(PersonModel person) {
-        dataLoaderService.getPersons().remove(person);
-    }
-
-    public void update(PersonModel person) {
-        for (int i = 0; i < dataLoaderService.getPersons().size(); i++) {
-            PersonModel current = dataLoaderService.getPersons().get(i);
-            if (current.getFirstName().equals(person.getFirstName()) && current.getLastName().equals(person.getLastName())) {
-                dataLoaderService.getPersons().set(i, person);
-                return;
-            }
-        }
+    public void deleteByFullName(String firstName, String lastName) {
+        List<PersonModel> persons = dataLoaderService.getDataModel().getPersons();
+        persons.removeIf(person -> person.getFirstName().equalsIgnoreCase(firstName)
+                && person.getLastName().equalsIgnoreCase(lastName));
+        dataLoaderService.getDataModel().setPersons(persons);
     }
 }
+
 
 
 
