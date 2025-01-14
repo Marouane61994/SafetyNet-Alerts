@@ -1,7 +1,6 @@
 package com.safetynet.SafetyNetAlerts;
 
 
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,6 @@ public class FireStationTest {
 
     @Autowired
     private MockMvc mockMvc;
-
 
 
     @Test
@@ -73,6 +71,7 @@ public class FireStationTest {
         mockMvc.perform(delete("/firestation/789 Oak St"))
                 .andExpect(status().isOk());
     }
+
     @BeforeEach
     public void setupData() throws IOException {
         Files.copy(Path.of("src/main/resources/databackup.json"), new FileOutputStream("src/main/resources/data.json"));
