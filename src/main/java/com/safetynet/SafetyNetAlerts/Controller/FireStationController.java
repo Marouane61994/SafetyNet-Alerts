@@ -9,7 +9,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/fireStations")
+@RequestMapping("/firestation")
 public class FireStationController {
 
     private final FireStationService fireStationService;

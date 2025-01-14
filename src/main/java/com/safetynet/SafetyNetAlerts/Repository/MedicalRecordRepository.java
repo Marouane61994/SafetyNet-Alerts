@@ -33,7 +33,7 @@ public class MedicalRecordRepository {
         medicalRecords.removeIf(mr -> mr.getFirstName().equalsIgnoreCase(medicalRecord.getFirstName())
                 && mr.getLastName().equalsIgnoreCase(medicalRecord.getLastName()));
         medicalRecords.add(medicalRecord);
-
+        dataLoaderService.writeJsonToFile();
         dataLoaderService.getDataModel().setMedicalRecord(medicalRecords);
         return medicalRecord;
     }
@@ -43,6 +43,7 @@ public class MedicalRecordRepository {
         medicalRecords.removeIf(medicalRecord -> medicalRecord.getFirstName().equalsIgnoreCase(firstName)
                 && medicalRecord.getLastName().equalsIgnoreCase(lastName));
         dataLoaderService.getDataModel().setMedicalRecord(medicalRecords);
+        dataLoaderService.writeJsonToFile();
     }
 }
 

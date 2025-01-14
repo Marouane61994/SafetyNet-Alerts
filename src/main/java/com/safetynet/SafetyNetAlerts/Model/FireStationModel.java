@@ -5,7 +5,7 @@ import lombok.Data;
 public class FireStationModel {
     private String address;
     private String station;
-    private Long id;
+
 
     @Override
     public String toString() {

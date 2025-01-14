@@ -33,6 +33,7 @@ public class FireStationRepository {
         fireStations.add(fireStation);
 
         dataLoaderService.getDataModel().setFireStation(fireStations);
+        dataLoaderService.writeJsonToFile();
         return fireStation;
     }
 
@@ -40,5 +41,6 @@ public class FireStationRepository {
         List<FireStationModel> fireStations = dataLoaderService.getDataModel().getFireStation();
         fireStations.removeIf(fireStation -> fireStation.getAddress().equalsIgnoreCase(address));
         dataLoaderService.getDataModel().setFireStation(fireStations);
+        dataLoaderService.writeJsonToFile();
     }
 }
