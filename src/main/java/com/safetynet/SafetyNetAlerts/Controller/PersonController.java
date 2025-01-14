@@ -2,6 +2,8 @@ package com.safetynet.SafetyNetAlerts.Controller;
 
 import com.safetynet.SafetyNetAlerts.Model.PersonModel;
 import com.safetynet.SafetyNetAlerts.Service.PersonService;
+
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,13 +23,14 @@ public class PersonController {
     }
 
     @PostMapping
-    public void addPerson(@RequestBody PersonModel person) {
+    public PersonModel addPerson(@RequestBody PersonModel person) {
         personService.addPerson(person);
+        return person;
     }
 
     @PutMapping("/{firstName}/{lastName}")
-    public PersonModel updatePerson(@RequestBody PersonModel person,@PathVariable String firstName, @PathVariable String lastName) {
-        return personService.updatePerson(firstName, lastName,person);
+    public PersonModel updatePerson(@RequestBody PersonModel person, @PathVariable String firstName, @PathVariable String lastName) {
+        return personService.updatePerson(firstName, lastName, person);
     }
 
     @DeleteMapping("/{firstName}/{lastName}")

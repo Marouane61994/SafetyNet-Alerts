@@ -6,21 +6,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.safetynet.SafetyNetAlerts.Model.DataModel;
 import lombok.Data;
-import lombok.Getter;
+
 import org.springframework.stereotype.Service;
 import java.io.*;
 
-@Getter
+
 @Data
 @Service
 public class DataLoaderService {
     private DataModel dataModel;
 
     public  DataLoaderService(){
-
-
         readJsonFromFile();
-        writeJsonToFile();
+
     }
 
     public void readJsonFromFile() {
