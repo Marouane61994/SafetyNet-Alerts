@@ -1,7 +1,6 @@
 package com.safetynet.SafetyNetAlerts;
 
 
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +85,29 @@ public class PersonTest {
 
         mockMvc.perform(delete("/person/Roger/Boyd"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetCommunityEmails() throws Exception {
+        mockMvc.perform(get("/communityEmail?city=Culver"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()").value(15))
+                .andExpect(jsonPath("$[0]").value("jaboyd@email.com"))
+                .andExpect(jsonPath("$[1]").value( "drk@email.com"))
+                .andExpect(jsonPath("$[2]").value( "tenz@email.com"))
+                .andExpect(jsonPath("$[3]").value("tcoop@ymail.com"))
+                .andExpect(jsonPath("$[4]").value( "lily@email.com"))
+                .andExpect(jsonPath("$[5]").value("soph@email.com"))
+                .andExpect(jsonPath("$[6]").value( "ward@email.com"))
+                .andExpect(jsonPath("$[7]").value("zarc@email.com"))
+                .andExpect(jsonPath("$[8]").value("reg@email.com"))
+                .andExpect(jsonPath("$[9]").value( "jpeter@email.com"))
+                .andExpect(jsonPath("$[10]").value( "aly@imail.com"))
+                .andExpect(jsonPath("$[11]").value(  "bstel@email.com"))
+                .andExpect(jsonPath("$[12]").value( "ssanw@email.com"))
+                .andExpect(jsonPath("$[13]").value( "clivfd@ymail.com"))
+                .andExpect(jsonPath("$[14]").value( "gramps@email.com"));
     }
 
     @BeforeEach

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -33,8 +34,17 @@ public class PersonService {
 
         return personRepository.save(existingPerson);
     }
+
     public void deletePerson(String firstName, String lastName) {
         personRepository.deleteByFullName(firstName, lastName);
+    }
+
+    public List<String> getCommunityEmailsByCity(String city) {
+        return personRepository.findAll().stream()
+                .filter(person -> person.getCity().equalsIgnoreCase(city))
+                .map(PersonModel::getEmail)
+                .distinct()
+                .collect(Collectors.toList());
     }
 }
 

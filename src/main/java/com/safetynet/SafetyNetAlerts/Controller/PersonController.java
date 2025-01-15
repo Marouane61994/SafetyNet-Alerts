@@ -11,32 +11,36 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/person")
 public class PersonController {
 
     private final PersonService personService;
 
 
-    @GetMapping
+    @GetMapping("/person")
     public List<PersonModel> getAllPersons() {
         return personService.getAllPersons();
     }
 
-    @PostMapping
+    @PostMapping("/person")
     public PersonModel addPerson(@RequestBody PersonModel person) {
         personService.addPerson(person);
         return person;
     }
 
-    @PutMapping("/{firstName}/{lastName}")
+    @PutMapping("/person/{firstName}/{lastName}")
     public PersonModel updatePerson(@RequestBody PersonModel person, @PathVariable String firstName, @PathVariable String lastName) {
         return personService.updatePerson(firstName, lastName, person);
     }
 
-    @DeleteMapping("/{firstName}/{lastName}")
+    @DeleteMapping("/person/{firstName}/{lastName}")
     public String deletePerson(@PathVariable String firstName, @PathVariable String lastName) {
         personService.deletePerson(firstName, lastName);
         return "Person deleted successfully";
+    }
+
+    @GetMapping("/communityEmail")
+    public List<String> getCommunityEmails(@RequestParam String city) {
+        return personService.getCommunityEmailsByCity(city);
     }
 }
 
