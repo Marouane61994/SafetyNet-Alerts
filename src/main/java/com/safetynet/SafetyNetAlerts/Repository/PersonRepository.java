@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Repository
@@ -47,6 +48,11 @@ public class PersonRepository {
                 && person.getLastName().equalsIgnoreCase(lastName));
         dataLoaderService.getDataModel().setPersons(persons);
         dataLoaderService.writeJsonToFile();
+    }
+    public List<PersonModel> findByLastName(String lastName) {
+        return findAll().stream()
+                .filter(person -> person.getLastName().equalsIgnoreCase(lastName))
+                .collect(Collectors.toList());
     }
 }
 

@@ -1,5 +1,6 @@
 package com.safetynet.SafetyNetAlerts.Controller;
 
+import com.safetynet.SafetyNetAlerts.Model.PersonInfo;
 import com.safetynet.SafetyNetAlerts.Model.PersonModel;
 import com.safetynet.SafetyNetAlerts.Service.PersonService;
 
@@ -42,5 +43,12 @@ public class PersonController {
     public List<String> getCommunityEmails(@RequestParam String city) {
         return personService.getCommunityEmailsByCity(city);
     }
+
+    @GetMapping("/personInfolastName")
+    public List<PersonInfo> getPersonInfoByLastName(@RequestParam String lastName) {
+        return personService.getPersonInfoByLastName(lastName);
+    }
 }
+
+
 

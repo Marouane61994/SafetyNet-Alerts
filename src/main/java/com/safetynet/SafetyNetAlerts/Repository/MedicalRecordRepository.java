@@ -45,5 +45,5 @@ public class MedicalRecordRepository {
         dataLoaderService.getDataModel().setMedicalRecord(medicalRecords);
         dataLoaderService.writeJsonToFile();
     }
+    
 }
-

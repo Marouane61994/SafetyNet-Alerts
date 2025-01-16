@@ -110,6 +110,19 @@ public class PersonTest {
                 .andExpect(jsonPath("$[14]").value( "gramps@email.com"));
     }
 
+    @Test
+    public void testGetPersonInfoByLastName() throws Exception {
+        mockMvc.perform(get("/personInfolastName?lastName=Boyd"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(6))
+                .andExpect(jsonPath("$[0].firstName").value("John"))
+                .andExpect(jsonPath("$[1].firstName").value("Jacob"))
+                .andExpect(jsonPath("$[2].firstName").value("Tenley"))
+                .andExpect(jsonPath("$[3].firstName").value("Roger"))
+                .andExpect(jsonPath("$[4].firstName").value("Felicia"))
+                .andExpect(jsonPath("$[5].firstName").value("Allison"));
+    }
+
     @BeforeEach
     public void setupData() throws IOException {
         Files.copy(Path.of("src/main/resources/databackup.json"), new FileOutputStream("src/main/resources/data.json"));
