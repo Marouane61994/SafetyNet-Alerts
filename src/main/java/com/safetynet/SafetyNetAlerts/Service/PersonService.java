@@ -54,6 +54,7 @@ public class PersonService {
                 .distinct()
                 .collect(Collectors.toList());
     }
+
     public List<PersonInfo> getPersonInfoByLastName(String lastName) {
         List<PersonModel> persons = personRepository.findByLastName(lastName);
 
