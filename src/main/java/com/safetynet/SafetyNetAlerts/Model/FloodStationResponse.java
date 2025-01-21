@@ -1,12 +1,17 @@
 package com.safetynet.SafetyNetAlerts.Model;
 
 import lombok.Data;
+
+
 import java.util.List;
 
 @Data
 public class FloodStationResponse {
     private String address;
+    private int stationNumber;
     private List<ResidentInfo> person;
+
+
 
     @Data
     public static class ResidentInfo {
@@ -16,6 +21,8 @@ public class FloodStationResponse {
         private String phone;
         private List<String> medications;
         private List<String> allergies;
+
+
     }
 
 }

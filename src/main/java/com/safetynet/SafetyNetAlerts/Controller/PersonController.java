@@ -48,6 +48,7 @@ public class PersonController {
     public List<PersonInfo> getPersonInfoByLastName(@RequestParam String lastName) {
         return personService.getPersonInfoByLastName(lastName);
     }
+
 }
 
 

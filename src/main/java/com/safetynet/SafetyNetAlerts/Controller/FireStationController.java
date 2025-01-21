@@ -1,5 +1,6 @@
 package com.safetynet.SafetyNetAlerts.Controller;
 
+import com.safetynet.SafetyNetAlerts.Model.FireResponse;
 import com.safetynet.SafetyNetAlerts.Model.FireStationModel;
 import com.safetynet.SafetyNetAlerts.Model.FloodStationResponse;
 import com.safetynet.SafetyNetAlerts.Service.FireStationService;
@@ -41,6 +42,12 @@ public class FireStationController {
     public List<FloodStationResponse> getFloodStations(@RequestParam List<Integer> stations) {
         return fireStationService.getFloodStations(stations);
     }
+
+    @GetMapping("/fire")
+    public FireResponse getResidentsByAddress(@RequestParam String address) {
+        return fireStationService.getResidentsByAddress(address);
+    }
+
 }
 
 

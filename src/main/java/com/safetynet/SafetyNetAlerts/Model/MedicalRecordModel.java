@@ -17,6 +17,7 @@ public class MedicalRecordModel {
     private List<String> allergies;
 
 
+
     @Override
     public String toString() {
         return "medicalRecords{" +

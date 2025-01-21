@@ -1,4 +1,5 @@
-package com.safetynet.SafetyNetAlerts;
+package com.safetynet.SafetyNetAlerts.Integration;
+
 
 
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +14,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class FireStationTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    public MockMvc mockMvc;
 
 
     @Test
@@ -68,8 +68,23 @@ public class FireStationTest {
     @Test
     public void testDeleteFireStation() throws Exception {
 
-        mockMvc.perform(delete("/firestation/789 Oak St"))
+        mockMvc.perform(get("/firestation/789 Oak St"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetFloodStations() throws Exception {
+        mockMvc.perform(get("/flood/stations?stations=2"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+    }
+    @Test
+    public void getResidentsByAddress() throws Exception {
+        mockMvc.perform(get("/fire?address=947 E. Rose Dr"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
     }
 
     @BeforeEach

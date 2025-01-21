@@ -1,4 +1,4 @@
-package com.safetynet.SafetyNetAlerts;
+package com.safetynet.SafetyNetAlerts.Integration;
 
 
 import org.junit.jupiter.api.BeforeEach;
