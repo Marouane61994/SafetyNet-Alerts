@@ -2,6 +2,7 @@ package com.safetynet.SafetyNetAlerts.Service;
 
 import com.safetynet.SafetyNetAlerts.Model.*;
 import com.safetynet.SafetyNetAlerts.Repository.FireStationRepository;
+import com.safetynet.SafetyNetAlerts.Repository.PersonRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,12 +12,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
+
 @RequiredArgsConstructor
 @Service
 public class FireStationService {
 
     private final FireStationRepository fireStationRepository;
     private final DataLoaderService dataLoaderService;
+    private final PersonRepository personRepository;
+
     public List<FireStationModel> getAllFireStations() {
         return fireStationRepository.findAll();
     }
@@ -129,6 +133,17 @@ public class FireStationService {
     }
 
 
+    public List<String> getPhoneNumbersByFireStation(int stationNumber) {
+        // Récupérer les adresses couvertes par la caserne
+        List<String> coveredAddresses = fireStationRepository.findAddressesByStationNumber(String.valueOf(stationNumber));
+
+        // Filtrer les personnes par adresse et récupérer leurs numéros
+        return personRepository.findAll().stream()
+                .filter(person -> coveredAddresses.contains(person.getAddress())) // Vérifie si l'adresse est couverte
+                .map(PersonModel::getPhone) // Récupère les numéros de téléphone
+                .distinct() // Élimine les doublons
+                .collect(Collectors.toList());
+    }
 
     private int calculateAge(LocalDate birthDate) {
         return Period.between(birthDate, LocalDate.now()).getYears();

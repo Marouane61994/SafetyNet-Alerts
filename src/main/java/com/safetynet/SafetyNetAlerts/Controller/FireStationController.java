@@ -38,6 +38,7 @@ public class FireStationController {
         fireStationService.deleteFireStation(address);
         return "FireStation deleted successfully";
     }
+
     @GetMapping("flood/stations")
     public List<FloodStationResponse> getFloodStations(@RequestParam List<Integer> stations) {
         return fireStationService.getFloodStations(stations);
@@ -48,6 +49,12 @@ public class FireStationController {
         return fireStationService.getResidentsByAddress(address);
     }
 
+    @GetMapping("/phoneAlert")
+
+    public List<String> getPhoneNumbersByFireStation(@RequestParam("firestation") int stationNumber) {
+       return fireStationService.getPhoneNumbersByFireStation(stationNumber);
+
+    }
 }
 
 

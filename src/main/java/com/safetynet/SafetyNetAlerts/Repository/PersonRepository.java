@@ -6,6 +6,7 @@ import com.safetynet.SafetyNetAlerts.Service.DataLoaderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -17,7 +18,7 @@ public class PersonRepository {
     private final DataLoaderService dataLoaderService;
 
 
-    public List<PersonModel> findAll() {
+    public  List<PersonModel> findAll() {
         return dataLoaderService.getDataModel().getPersons();
     }
 
@@ -54,7 +55,6 @@ public class PersonRepository {
                 .filter(person -> person.getLastName().equalsIgnoreCase(lastName))
                 .collect(Collectors.toList());
     }
-
 }
 
 

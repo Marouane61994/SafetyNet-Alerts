@@ -4,7 +4,9 @@ import com.safetynet.SafetyNetAlerts.Model.*;
 import com.safetynet.SafetyNetAlerts.Service.DataLoaderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -43,5 +45,15 @@ public class FireStationRepository {
         dataLoaderService.writeJsonToFile();
     }
 
+    public List<String> findAddressesByStationNumber(String stationNumber) {
+        return dataLoaderService.getDataModel().getFireStation().stream()
+                .filter(fireStation -> fireStation.getStation().equals(stationNumber)) // Filtre les casernes
+                .map(FireStationModel::getAddress) // Extrait les adresses
+                .collect(Collectors.toList());
+    }
+
+
 }
+
+
 
