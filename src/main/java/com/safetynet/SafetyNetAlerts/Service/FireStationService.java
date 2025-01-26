@@ -12,7 +12,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-
 @RequiredArgsConstructor
 @Service
 public class FireStationService {
@@ -85,7 +84,7 @@ public class FireStationService {
                 .map(entry -> {
                     var response = new FloodStationResponse();
                     response.setAddress(entry.getKey());
-                    response.setPerson(entry.getValue());
+                    response.setPersons(entry.getValue());
                     return response;
                 })
                 .collect(Collectors.toList());
@@ -145,9 +144,71 @@ public class FireStationService {
                 .collect(Collectors.toList());
     }
 
+    public List<ChildAlertResponse> getChildAlert(String address) {
+        // Charger les données depuis le DataModel
+        var dataModel = dataLoaderService.getDataModel();
+
+        // Trouver les résidents vivant à l'adresse spécifiée
+        List<PersonModel> residents = dataModel.getPersons().stream()
+                .filter(person -> person.getAddress().equalsIgnoreCase(address))
+                .toList();
+
+        // Séparer les enfants (<= 18 ans) des autres résidents
+        List<ChildAlertResponse.ChildInfo> children = residents.stream()
+                .map(person -> {
+                    var medicalRecord = dataModel.getMedicalRecord().stream()
+                            .filter(record -> record.getFirstName().equals(person.getFirstName())
+                                    && record.getLastName().equals(person.getLastName()))
+                            .findFirst()
+                            .orElse(null);
+
+                    int age = (medicalRecord != null) ? calculateAge(medicalRecord.getBirthdate()) : -1;
+
+                    // Retourner uniquement si la personne est un enfant
+                    if (age <= 18) {
+                        return new ChildAlertResponse.ChildInfo(
+                                person.getFirstName(),
+                                person.getLastName(),
+                                age
+                        );
+
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull) // Supprimer les valeurs null
+                .toList();
+
+        // Si aucun enfant n'est trouvé, retourner une liste vide
+        if (children.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // Ajouter les autres résidents comme membres du foyer
+        List<ChildAlertResponse.FamilyMemberInfo> familyMembers = residents.stream()
+                .filter(person -> children.stream()
+                        .noneMatch(child -> child.getFirstName().equals(person.getFirstName())
+                                && child.getLastName().equals(person.getLastName())))
+                .map(person -> new ChildAlertResponse.FamilyMemberInfo(
+                        person.getFirstName(),
+                        person.getLastName()
+                ))
+                .collect(Collectors.toList());
+
+        // Construire la réponse pour chaque enfant
+        return children.stream()
+                .map(child -> new ChildAlertResponse(
+                        child.getFirstName(),
+                        child.getLastName(),
+                        child.getAge(),
+                        familyMembers
+                ))
+                .collect(Collectors.toList());
+    }
+
     private int calculateAge(LocalDate birthDate) {
         return Period.between(birthDate, LocalDate.now()).getYears();
     }
+
 
 }
 

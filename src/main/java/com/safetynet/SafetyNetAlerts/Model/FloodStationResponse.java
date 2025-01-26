@@ -9,7 +9,7 @@ import java.util.List;
 public class FloodStationResponse {
     private String address;
     private int stationNumber;
-    private List<ResidentInfo> person;
+    private List<ResidentInfo> persons;
 
 
 

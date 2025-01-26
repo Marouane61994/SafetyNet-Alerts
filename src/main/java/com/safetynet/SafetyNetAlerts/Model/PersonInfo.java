@@ -16,8 +16,9 @@ public class PersonInfo {
     private List<String> medications;
     private List<String> allergies;
 
+
     public String toString() {
-        return "Person{" +
+        return "Persons{" +
                 "firstName='" + firstName + '\'' +
                 "lastName='" + lastName + '\'' +
                 "address='" + address + '\'' +
