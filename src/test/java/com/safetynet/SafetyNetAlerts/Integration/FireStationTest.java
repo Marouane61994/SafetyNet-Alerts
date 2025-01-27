@@ -95,6 +95,20 @@ public class FireStationTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
     }
+    @Test
+    public void getChildAlert() throws Exception {
+        mockMvc.perform(get("/childAlert?address=1509 Culver St"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+    }
+    @Test
+    public void getPersonsCoveredByStation() throws Exception {
+        mockMvc.perform(get("/coverage?stationNumber=4"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+    }
 
     @BeforeEach
     public void setupData() throws IOException {

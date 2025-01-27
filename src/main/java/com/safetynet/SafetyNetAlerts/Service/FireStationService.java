@@ -5,7 +5,6 @@ import com.safetynet.SafetyNetAlerts.Repository.FireStationRepository;
 import com.safetynet.SafetyNetAlerts.Repository.PersonRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
@@ -203,6 +202,59 @@ public class FireStationService {
                         familyMembers
                 ))
                 .collect(Collectors.toList());
+    }
+
+    public FireStationResponse getPersonsByStationNumber(int stationNumber) {
+        // Charger les données
+        var dataModel = dataLoaderService.getDataModel();
+
+        // Récupérer les adresses couvertes par la station
+        Set<String> addresses = dataModel.getFireStation().stream()
+                .filter(fireStation -> Integer.parseInt(fireStation.getStation()) == stationNumber)
+                .map(FireStationModel::getAddress)
+                .collect(Collectors.toSet());
+
+        // Récupérer les personnes habitant ces adresses
+        List<FireStationResponse.PersonInfo> persons = dataModel.getPersons().stream()
+                .filter(person -> addresses.contains(person.getAddress()))
+                .map(person -> {
+                    var personInfo = new FireStationResponse.PersonInfo();
+                    personInfo.setFirstName(person.getFirstName());
+                    personInfo.setLastName(person.getLastName());
+                    personInfo.setAddress(person.getAddress());
+                    personInfo.setPhone(person.getPhone());
+                    return personInfo;
+                })
+                .collect(Collectors.toList());
+
+        // Calculer le nombre d'adultes et d'enfants
+        int adults = 0;
+        int children = 0;
+        for (PersonModel person : dataModel.getPersons()) {
+            if (addresses.contains(person.getAddress())) {
+                var medicalRecord = dataModel.getMedicalRecord().stream()
+                        .filter(record -> record.getFirstName().equals(person.getFirstName()) &&
+                                record.getLastName().equals(person.getLastName()))
+                        .findFirst()
+                        .orElse(null);
+
+                if (medicalRecord != null) {
+                    int age = calculateAge(medicalRecord.getBirthdate());
+                    if (age <= 18) {
+                        children++;
+                    } else {
+                        adults++;
+                    }
+                }
+            }
+        }
+        // Construire la réponse
+        FireStationResponse response = new FireStationResponse();
+        response.setPersons(persons);
+        response.setAdultCount(adults);
+        response.setChildCount(children);
+
+        return response;
     }
 
     private int calculateAge(LocalDate birthDate) {
