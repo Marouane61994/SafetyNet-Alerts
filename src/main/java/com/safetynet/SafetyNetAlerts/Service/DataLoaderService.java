@@ -27,10 +27,11 @@ public class DataLoaderService {
         objectMapper.registerModule(new JavaTimeModule());
         try (InputStream inputStream = getClass().getResourceAsStream("/data.json")) {
                 dataModel = objectMapper.readValue(inputStream, DataModel.class);
-            ;
+
         } catch (IOException e) {
             throw new RuntimeException("Error loading JSON data", e);
         }
+
     }
 
     public void writeJsonToFile() {

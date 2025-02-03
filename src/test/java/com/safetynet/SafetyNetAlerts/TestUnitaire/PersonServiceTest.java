@@ -3,97 +3,94 @@ package com.safetynet.SafetyNetAlerts.TestUnitaire;
 
 
 import com.safetynet.SafetyNetAlerts.Model.PersonModel;
-import com.safetynet.SafetyNetAlerts.Repository.MedicalRecordRepository;
 import com.safetynet.SafetyNetAlerts.Repository.PersonRepository;
+import com.safetynet.SafetyNetAlerts.Response.PersonInfo;
 import com.safetynet.SafetyNetAlerts.Service.PersonService;
-import lombok.Data;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import static org.mockito.Mockito.*;
 
-
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-@Data
+
+@ExtendWith(MockitoExtension.class)
 class PersonServiceTest {
 
     @Mock
     private PersonRepository personRepository;
 
-    @Mock
-    private MedicalRecordRepository medicalRecordRepository;
-
     @InjectMocks
     private PersonService personService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+
 
     @Test
     void testGetAllPersons() {
+        when(personRepository.findAll()).thenReturn(List.of(new PersonModel()));
 
-        List<PersonModel> mockPersons = Arrays.asList(
-                new PersonModel(),
-                new PersonModel()
-        );
-        when(personRepository.findAll()).thenReturn(mockPersons);
+        List<PersonModel> persons = personService.getAllPersons();
 
-        List<PersonModel> result = personService.getAllPersons();
-
-        assertThat(result).isNotNull();
-        assertThat(result).hasSize(2);
-        verify(personRepository, times(1)).findAll();
+        assertEquals(1, persons.size());
     }
 
     @Test
     void testAddPerson() {
-        PersonModel newPerson = new PersonModel();
-
-        personService.addPerson(newPerson);
-
-        verify(personRepository, times(1)).save(newPerson);
+        personService.addPerson(new PersonModel());
+        verify(personRepository, times(1)).save(new PersonModel());
     }
 
-
     @Test
-    void testUpdatePerson_NotFound() {
-        String firstName = "NonExistent";
-        String lastName = "Person";
+    void testUpdatePerson() {
+        when(personRepository.findByFullName("John", "Boyd")).thenReturn(Optional.of(new PersonModel()));
+
         PersonModel updatedPerson = new PersonModel();
 
-        when(personRepository.findByFullName(firstName, lastName)).thenReturn(Optional.empty());
+        PersonModel result = personService.updatePerson("John", "Boyd", updatedPerson);
 
-        RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> personService.updatePerson(firstName, lastName, updatedPerson));
-        assertThat(exception.getMessage()).isEqualTo("Person not found with name: NonExistent Person");
-        verify(personRepository, times(1)).findByFullName(firstName, lastName);
-        verify(personRepository, never()).save(any());
+        assertEquals("1509 Culver St", result.getAddress());
+        assertEquals("Culver", result.getCity());
+        assertEquals("97451", result.getZip());
     }
 
     @Test
     void testDeletePerson() {
+        personService.deletePerson("John", "Boyd");
+        verify(personRepository, times(1)).deleteByFullName("John", "Boyd");
+    }
 
-        String firstName = "John";
-        String lastName = "Doe";
+    @Test
+    void testGetCommunityEmailsByCity() {
+        when(personRepository.findAll()).thenReturn(List.of(new PersonModel()));
 
+        List<String> emails = personService.getCommunityEmailsByCity("Culver");
 
-        personService.deletePerson(firstName, lastName);
+        assertEquals(1, emails.size());
+        assertEquals("jaboyd@email.com", emails.get(0));
+    }
 
+    @Test
+    void testGetPersonInfoByLastName() {
+        when(personRepository.findByLastName("Boyd")).thenReturn(List.of(new PersonModel()));
+        when(personRepository.findByFullName("Tenley", "Boyd")).thenReturn(Optional.of(new PersonModel()));
 
-        verify(personRepository, times(1)).deleteByFullName(firstName, lastName);
+        List<PersonInfo> infos = personService.getPersonInfoByLastName("Boyd");
+
+        assertEquals(1, infos.size());
+        assertEquals("Tenley", infos.get(0).getFirstName());
+        assertEquals("Boyd", infos.get(0).getLastName());
+
     }
 
 
 }
+
+

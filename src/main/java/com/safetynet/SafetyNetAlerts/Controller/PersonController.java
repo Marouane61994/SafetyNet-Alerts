@@ -1,6 +1,6 @@
 package com.safetynet.SafetyNetAlerts.Controller;
 
-import com.safetynet.SafetyNetAlerts.Model.PersonInfo;
+import com.safetynet.SafetyNetAlerts.Response.PersonInfo;
 import com.safetynet.SafetyNetAlerts.Model.PersonModel;
 import com.safetynet.SafetyNetAlerts.Service.PersonService;
 

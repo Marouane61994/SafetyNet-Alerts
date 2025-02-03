@@ -1,16 +1,18 @@
-package com.safetynet.SafetyNetAlerts.Model;
+package com.safetynet.SafetyNetAlerts.Response;
 
-import lombok.AllArgsConstructor;
+
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-@AllArgsConstructor
 public class FireResponse {
 
     private String address;
     private int stationNumber;
     private List<FloodStationResponse.ResidentInfo> residents;
 
+    public FireResponse(String address, int stationNumber, List<FloodStationResponse.ResidentInfo> residents) {
+        this.address =address;
+    }
 }

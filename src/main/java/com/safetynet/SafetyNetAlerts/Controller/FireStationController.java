@@ -1,9 +1,12 @@
 package com.safetynet.SafetyNetAlerts.Controller;
 
 import com.safetynet.SafetyNetAlerts.Model.*;
+import com.safetynet.SafetyNetAlerts.Response.ChildAlertResponse;
+import com.safetynet.SafetyNetAlerts.Response.FireResponse;
+import com.safetynet.SafetyNetAlerts.Response.FireStationResponse;
+import com.safetynet.SafetyNetAlerts.Response.FloodStationResponse;
 import com.safetynet.SafetyNetAlerts.Service.FireStationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,7 +19,7 @@ public class FireStationController {
     private final FireStationService fireStationService;
 
 
-    @GetMapping("/firestation")
+    @GetMapping("/firestations")
     public List<FireStationModel> getAllFireStations() {
         return fireStationService.getAllFireStations();
 
@@ -58,7 +61,7 @@ public class FireStationController {
         return fireStationService.getChildAlert(address);
     }
 
-    @GetMapping("/coverage")
+    @GetMapping("/firestation")
     public FireStationResponse getPersonsCoveredByStation(@RequestParam("stationNumber") int stationNumber) {
         return fireStationService.getPersonsByStationNumber(stationNumber);}
 }

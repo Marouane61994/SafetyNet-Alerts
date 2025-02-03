@@ -1,4 +1,5 @@
 package com.safetynet.SafetyNetAlerts.Model;
+
 import lombok.Data;
 
 @Data

@@ -3,13 +3,16 @@ package com.safetynet.SafetyNetAlerts.Service;
 import com.safetynet.SafetyNetAlerts.Model.*;
 import com.safetynet.SafetyNetAlerts.Repository.FireStationRepository;
 import com.safetynet.SafetyNetAlerts.Repository.PersonRepository;
+import com.safetynet.SafetyNetAlerts.Response.ChildAlertResponse;
+import com.safetynet.SafetyNetAlerts.Response.FireResponse;
+import com.safetynet.SafetyNetAlerts.Response.FireStationResponse;
+import com.safetynet.SafetyNetAlerts.Response.FloodStationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.time.LocalDate;
-import java.time.Period;
+
+
 import java.util.*;
 import java.util.stream.Collectors;
-
 
 @RequiredArgsConstructor
 @Service
@@ -18,6 +21,8 @@ public class FireStationService {
     private final FireStationRepository fireStationRepository;
     private final DataLoaderService dataLoaderService;
     private final PersonRepository personRepository;
+    private final PersonService personService;
+
 
     public List<FireStationModel> getAllFireStations() {
         return fireStationRepository.findAll();
@@ -59,75 +64,65 @@ public class FireStationService {
                 .collect(Collectors.groupingBy(
                         PersonModel::getAddress,
                         Collectors.mapping(person -> {
-                            var medicalRecord = dataModel.getMedicalRecord().stream()
-                                    .filter(record -> record.getFirstName().equals(person.getFirstName()) &&
-                                            record.getLastName().equals(person.getLastName()))
-                                    .findFirst()
-                                    .orElse(null);
+                            var medicalRecord = getMedicalRecordModel(person, dataModel);
 
-                            int age = (medicalRecord != null) ? calculateAge(medicalRecord.getBirthdate()) : -1;
+                            int age = medicalRecord.map(record -> personService.calculateAge(record.getBirthdate())).orElse(-1);
 
-                            var residentInfo = new FloodStationResponse.ResidentInfo();
-                            residentInfo.setFirstName(person.getFirstName());
-                            residentInfo.setLastName(person.getLastName());
-                            residentInfo.setPhone(person.getPhone());
-                            residentInfo.setAge(age);
-                            residentInfo.setMedications(medicalRecord != null ? medicalRecord.getMedications() : Collections.emptyList());
-                            residentInfo.setAllergies(medicalRecord != null ? medicalRecord.getAllergies() : Collections.emptyList());
-                            return residentInfo;
+                            return new FloodStationResponse.ResidentInfo(
+                                    person.getFirstName(),
+                                    person.getLastName(),
+                                    person.getPhone(),
+                                    age,
+                                    medicalRecord.map(MedicalRecordModel::getMedications).orElse(Collections.emptyList()),
+                                    medicalRecord.map(MedicalRecordModel::getAllergies).orElse(Collections.emptyList())
+                            );
                         }, Collectors.toList())
                 ));
 
         // Construire la liste des réponses
         return addressToResidents.entrySet().stream()
-                .map(entry -> {
-                    var response = new FloodStationResponse();
-                    response.setAddress(entry.getKey());
-                    response.setPersons(entry.getValue());
-                    return response;
-                })
+                .map(entry -> new FloodStationResponse(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
     }
 
     public FireResponse getResidentsByAddress(String address) {
-        DataModel data = dataLoaderService.getDataModel();
+        var dataModel = dataLoaderService.getDataModel();
 
         // Récupérer le numéro de caserne pour l'adresse
-        int stationNumber = Integer.parseInt(data.getFireStation().stream()
+        int stationNumber = Integer.parseInt(dataModel.getFireStation().stream()
                 .filter(fireStation -> fireStation.getAddress().equals(address))
                 .map(FireStationModel::getStation)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Adresse non desservie par une caserne")));
 
         // Récupérer les habitants de l'adresse
-        List<FloodStationResponse.ResidentInfo> residents = data.getPersons().stream()
+        List<FloodStationResponse.ResidentInfo> residents = getResidentInfos(address, dataModel);
+
+        return new FireResponse(address, stationNumber, residents);
+    }
+
+    private List<FloodStationResponse.ResidentInfo> getResidentInfos(String address, DataModel dataModel) {
+
+        return dataModel.getPersons().stream()
                 .filter(person -> person.getAddress().equals(address))
                 .map(person -> {
                     // Récupérer les antécédents médicaux
-                    MedicalRecordModel medicalRecord = data.getMedicalRecord().stream()
-                            .filter(record -> record.getFirstName().equals(person.getFirstName())
-                                    && record.getLastName().equals(person.getLastName()))
-                            .findFirst()
-                            .orElse(null);
+                    var medicalRecord = getMedicalRecordModel(person, dataModel);
 
                     // Calculer l'âge
-                    int age = (medicalRecord != null && medicalRecord.getBirthdate() != null)
-                            ? calculateAge(medicalRecord.getBirthdate())
-                            : -1;
+                    int age = medicalRecord.map(record -> personService.calculateAge(record.getBirthdate())).orElse(-1);
 
                     var residentInfo = new FloodStationResponse.ResidentInfo();
                     residentInfo.setFirstName(person.getFirstName());
                     residentInfo.setLastName(person.getLastName());
                     residentInfo.setPhone(person.getPhone());
                     residentInfo.setAge(age);
-                    residentInfo.setMedications(medicalRecord != null ? medicalRecord.getMedications() : Collections.emptyList());
-                    residentInfo.setAllergies(medicalRecord != null ? medicalRecord.getAllergies() : Collections.emptyList());
+                    residentInfo.setMedications(medicalRecord.map(MedicalRecordModel::getMedications).orElse(Collections.emptyList()));
+                    residentInfo.setAllergies(medicalRecord.map(MedicalRecordModel::getAllergies).orElse(Collections.emptyList()));
                     return residentInfo;
 
                 })
                 .collect(Collectors.toList());
-
-        return new FireResponse(address, stationNumber, residents);
     }
 
 
@@ -155,13 +150,9 @@ public class FireStationService {
         // Séparer les enfants (<= 18 ans) des autres résidents
         List<ChildAlertResponse.ChildInfo> children = residents.stream()
                 .map(person -> {
-                    var medicalRecord = dataModel.getMedicalRecord().stream()
-                            .filter(record -> record.getFirstName().equals(person.getFirstName())
-                                    && record.getLastName().equals(person.getLastName()))
-                            .findFirst()
-                            .orElse(null);
+                    var medicalRecord = getMedicalRecordModel(person, dataModel);
 
-                    int age = (medicalRecord != null) ? calculateAge(medicalRecord.getBirthdate()) : -1;
+                    int age = medicalRecord.map(record -> personService.calculateAge(record.getBirthdate())).orElse(-1);
 
                     // Retourner uniquement si la personne est un enfant
                     if (age <= 18) {
@@ -232,14 +223,10 @@ public class FireStationService {
         int children = 0;
         for (PersonModel person : dataModel.getPersons()) {
             if (addresses.contains(person.getAddress())) {
-                var medicalRecord = dataModel.getMedicalRecord().stream()
-                        .filter(record -> record.getFirstName().equals(person.getFirstName()) &&
-                                record.getLastName().equals(person.getLastName()))
-                        .findFirst()
-                        .orElse(null);
+                var medicalRecord = getMedicalRecordModel(person, dataModel);
 
-                if (medicalRecord != null) {
-                    int age = calculateAge(medicalRecord.getBirthdate());
+                if (medicalRecord.isPresent()) {
+                    int age = medicalRecord.map(record -> personService.calculateAge(record.getBirthdate())).orElse(-1);
                     if (age <= 18) {
                         children++;
                     } else {
@@ -257,13 +244,15 @@ public class FireStationService {
         return response;
     }
 
-    private int calculateAge(LocalDate birthDate) {
-        return Period.between(birthDate, LocalDate.now()).getYears();
+    private static Optional<MedicalRecordModel> getMedicalRecordModel(PersonModel person, DataModel dataModel) {
+        return dataModel.getMedicalRecord().stream()
+                .filter(record -> record.getFirstName().equals(person.getFirstName()) &&
+                        record.getLastName().equals(person.getLastName()))
+                .findFirst();
     }
 
 
 }
-
 
 
 

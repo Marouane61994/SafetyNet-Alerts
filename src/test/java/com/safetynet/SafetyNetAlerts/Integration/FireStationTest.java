@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,7 +28,7 @@ public class FireStationTest {
 
     @Test
     public void testGetAllFireStations() throws Exception {
-        mockMvc.perform(get("/firestation"))
+        mockMvc.perform(get("/firestations"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
@@ -67,10 +68,9 @@ public class FireStationTest {
 
     @Test
     public void testDeleteFireStation() throws Exception {
-
-        mockMvc.perform(get("/firestation/789 Oak St"))
+        mockMvc.perform(delete("/firestation/1509 Culver St"))
                 .andExpect(status().isOk());
-    }
+      }
 
     @Test
     public void testGetFloodStations() throws Exception {
@@ -104,7 +104,7 @@ public class FireStationTest {
     }
     @Test
     public void getPersonsCoveredByStation() throws Exception {
-        mockMvc.perform(get("/coverage?stationNumber=4"))
+        mockMvc.perform(get("/firestation?stationNumber=4"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 

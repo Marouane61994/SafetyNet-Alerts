@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class MedicalRecordTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    public MockMvc mockMvc;
 
 
     @Test
@@ -42,7 +42,15 @@ public class MedicalRecordTest {
                 }
                 """;
 
-        mockMvc.perform(post("/medicalRecord").contentType(MediaType.APPLICATION_JSON).content(newMedicalRecord)).andExpect(status().isOk()).andExpect(jsonPath("$.firstName").value("Felicia")).andExpect(jsonPath("$.lastName").value("Boyd"));
+        mockMvc.perform(post("/medicalRecord")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(newMedicalRecord))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName").value("Felicia"))
+                .andExpect(jsonPath("$.lastName").value("Boyd"))
+                .andExpect(jsonPath("$.birthdate").value("01/08/1986"))
+                .andExpect(jsonPath("$.medications").value("tetracyclaz:650mg"))
+                .andExpect(jsonPath("$.allergies").value("xilliathal"));
     }
 
     @Test
@@ -55,12 +63,19 @@ public class MedicalRecordTest {
                 }
                 """;
 
-        mockMvc.perform(put("/medicalRecord/Felicia/Boyd").contentType(MediaType.APPLICATION_JSON).content(updatedMedicalRecord)).andExpect(status().isOk()).andExpect(jsonPath("$.birthdate").value("01/08/1986")).andExpect(jsonPath("$.medications[0]").value("tetracyclaz:650mg")).andExpect(jsonPath("$.allergies[0]").value("xilliathal"));
+        mockMvc.perform(put("/medicalRecord/Felicia/Boyd")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updatedMedicalRecord))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.birthdate").value("01/08/1986"))
+                .andExpect(jsonPath("$.medications[0]").value("tetracyclaz:650mg"))
+                .andExpect(jsonPath("$.allergies[0]").value("xilliathal"));
     }
 
     @Test
     public void testDeleteMedicalRecord() throws Exception {
-        mockMvc.perform(delete("/medicalRecord/Alice/Brown")).andExpect(status().isOk());
+        mockMvc.perform(delete("/medicalRecord/John/Boyd"))
+                .andExpect(status().isOk());
     }
 
     @BeforeEach

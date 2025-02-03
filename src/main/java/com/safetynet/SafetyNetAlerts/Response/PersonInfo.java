@@ -1,4 +1,4 @@
-package com.safetynet.SafetyNetAlerts.Model;
+package com.safetynet.SafetyNetAlerts.Response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

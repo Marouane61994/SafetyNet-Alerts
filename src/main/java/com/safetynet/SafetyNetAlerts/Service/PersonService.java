@@ -1,7 +1,7 @@
 package com.safetynet.SafetyNetAlerts.Service;
 
 import com.safetynet.SafetyNetAlerts.Model.MedicalRecordModel;
-import com.safetynet.SafetyNetAlerts.Model.PersonInfo;
+import com.safetynet.SafetyNetAlerts.Response.PersonInfo;
 import com.safetynet.SafetyNetAlerts.Model.PersonModel;
 import com.safetynet.SafetyNetAlerts.Repository.MedicalRecordRepository;
 import com.safetynet.SafetyNetAlerts.Repository.PersonRepository;
@@ -76,7 +76,7 @@ public class PersonService {
         }).collect(Collectors.toList());
     }
 
-    private int calculateAge(LocalDate birthDate) {
+    public int calculateAge(LocalDate birthDate) {
         return Period.between(birthDate, LocalDate.now()).getYears();
     }
 }
