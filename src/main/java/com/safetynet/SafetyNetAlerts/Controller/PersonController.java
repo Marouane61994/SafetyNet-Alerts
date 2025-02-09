@@ -59,11 +59,12 @@ public class PersonController {
 
     @GetMapping("/personInfolastName")
     public List<PersonInfo> getPersonInfoByLastName(@RequestParam String lastName) {
-        logger.info("GET /personInfolastName?lastName={} - Fetching person info", lastName);
+       logger.info("GET /personInfolastName?lastName={} - Fetching person info", lastName);
         List<PersonInfo> personInfoList = personService.getPersonInfoByLastName(lastName);
-        logger.info("Response: {}", personInfoList);
+       logger.info("Response: {}", personInfoList);
         return personInfoList;
     }
+
 }
 
 

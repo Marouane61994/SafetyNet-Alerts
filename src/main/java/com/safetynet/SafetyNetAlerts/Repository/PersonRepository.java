@@ -17,8 +17,7 @@ public class PersonRepository {
 
     private final DataLoaderService dataLoaderService;
 
-
-    public  List<PersonModel> findAll() {
+    public List<PersonModel> findAll() {
         return dataLoaderService.getDataModel().getPersons();
     }
 
@@ -33,7 +32,6 @@ public class PersonRepository {
 
     public PersonModel save(PersonModel person) {
         List<PersonModel> persons = dataLoaderService.getDataModel().getPersons();
-        // Si la personne existe déjà, la supprimer pour la remplacer
         persons.removeIf(p -> p.getFirstName().equalsIgnoreCase(person.getFirstName())
                 && p.getLastName().equalsIgnoreCase(person.getLastName()));
 
@@ -50,6 +48,7 @@ public class PersonRepository {
         dataLoaderService.getDataModel().setPersons(persons);
         dataLoaderService.writeJsonToFile();
     }
+
     public List<PersonModel> findByLastName(String lastName) {
         return findAll().stream()
                 .filter(person -> person.getLastName().equalsIgnoreCase(lastName))

@@ -2,7 +2,6 @@ package com.safetynet.SafetyNetAlerts.Model;
 
 import lombok.Data;
 
-import java.util.List;
 
 @Data
 public class PersonModel {
@@ -17,7 +16,7 @@ public class PersonModel {
 
 
     public String toString() {
-        return "Person{" +
+        return "Persons{" +
                 "firstName='" + firstName + '\'' +
                 "lastName='" + lastName + '\'' +
                 "address='" + address + '\'' +

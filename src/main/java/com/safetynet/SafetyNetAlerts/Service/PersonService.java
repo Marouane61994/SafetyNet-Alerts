@@ -6,7 +6,7 @@ import com.safetynet.SafetyNetAlerts.Model.PersonModel;
 import com.safetynet.SafetyNetAlerts.Repository.MedicalRecordRepository;
 import com.safetynet.SafetyNetAlerts.Repository.PersonRepository;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -14,7 +14,7 @@ import java.time.Period;
 import java.util.List;
 import java.util.stream.Collectors;
 @Data
-@RequiredArgsConstructor
+
 @Service
 public class PersonService {
 
@@ -56,6 +56,7 @@ public class PersonService {
     }
 
     public List<PersonInfo> getPersonInfoByLastName(String lastName) {
+
         List<PersonModel> persons = personRepository.findByLastName(lastName);
 
         return persons.stream().map(person -> {
@@ -80,6 +81,3 @@ public class PersonService {
         return Period.between(birthDate, LocalDate.now()).getYears();
     }
 }
-
-
-

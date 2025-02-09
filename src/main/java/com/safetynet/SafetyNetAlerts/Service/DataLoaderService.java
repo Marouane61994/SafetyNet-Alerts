@@ -8,6 +8,7 @@ import com.safetynet.SafetyNetAlerts.Model.DataModel;
 import lombok.Data;
 
 import org.springframework.stereotype.Service;
+
 import java.io.*;
 
 
@@ -16,7 +17,7 @@ import java.io.*;
 public class DataLoaderService {
     private DataModel dataModel;
 
-    public  DataLoaderService(){
+    public DataLoaderService() {
         readJsonFromFile();
 
     }
@@ -26,7 +27,7 @@ public class DataLoaderService {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.registerModule(new JavaTimeModule());
         try (InputStream inputStream = getClass().getResourceAsStream("/data.json")) {
-                dataModel = objectMapper.readValue(inputStream, DataModel.class);
+            dataModel = objectMapper.readValue(inputStream, DataModel.class);
 
         } catch (IOException e) {
             throw new RuntimeException("Error loading JSON data", e);

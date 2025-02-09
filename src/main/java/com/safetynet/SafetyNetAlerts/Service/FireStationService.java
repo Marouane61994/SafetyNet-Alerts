@@ -206,15 +206,15 @@ public class FireStationService {
                 .collect(Collectors.toSet());
 
         // Récupérer les personnes habitant ces adresses
-        List<FireStationResponse.PersonInfo> persons = dataModel.getPersons().stream()
+        List<FireStationResponse.FireStationInfo> persons = dataModel.getPersons().stream()
                 .filter(person -> addresses.contains(person.getAddress()))
                 .map(person -> {
-                    var personInfo = new FireStationResponse.PersonInfo();
-                    personInfo.setFirstName(person.getFirstName());
-                    personInfo.setLastName(person.getLastName());
-                    personInfo.setAddress(person.getAddress());
-                    personInfo.setPhone(person.getPhone());
-                    return personInfo;
+                    var fireStationInfo = new FireStationResponse.FireStationInfo();
+                    fireStationInfo.setFirstName(person.getFirstName());
+                    fireStationInfo.setLastName(person.getLastName());
+                    fireStationInfo.setAddress(person.getAddress());
+                    fireStationInfo.setPhone(person.getPhone());
+                    return fireStationInfo;
                 })
                 .collect(Collectors.toList());
 
@@ -253,12 +253,3 @@ public class FireStationService {
 
 
 }
-
-
-
-
-
-
-
-
-
