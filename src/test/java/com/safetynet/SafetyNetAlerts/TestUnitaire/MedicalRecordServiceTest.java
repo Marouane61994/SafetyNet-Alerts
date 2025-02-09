@@ -3,7 +3,6 @@ package com.safetynet.SafetyNetAlerts.TestUnitaire;
 import com.safetynet.SafetyNetAlerts.Model.MedicalRecordModel;
 import com.safetynet.SafetyNetAlerts.Repository.MedicalRecordRepository;
 import com.safetynet.SafetyNetAlerts.Service.MedicalRecordService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,18 +29,17 @@ class MedicalRecordServiceTest {
 
     private MedicalRecordModel medicalRecord;
 
-    @BeforeEach
-    void setUp() {
+
+    @Test
+    void testGetAllMedicalRecords() {
+
         medicalRecord = new MedicalRecordModel();
         medicalRecord.setFirstName("John");
         medicalRecord.setLastName("Boyd");
         medicalRecord.setBirthdate(LocalDate.of(1984, 3, 6));
         medicalRecord.setMedications(Arrays.asList("aznol", "hydrapermazol"));
         medicalRecord.setAllergies(List.of("nillacilan"));
-    }
 
-    @Test
-    void testGetAllMedicalRecords() {
         when(medicalRecordRepository.findAll()).thenReturn(List.of(medicalRecord));
 
         List<MedicalRecordModel> records = medicalRecordService.getAllMedicalRecords();
@@ -53,6 +51,14 @@ class MedicalRecordServiceTest {
 
     @Test
     void testAddMedicalRecord() {
+
+        medicalRecord = new MedicalRecordModel();
+        medicalRecord.setFirstName("John");
+        medicalRecord.setLastName("Boyd");
+        medicalRecord.setBirthdate(LocalDate.of(1984, 3, 6));
+        medicalRecord.setMedications(Arrays.asList("aznol", "hydrapermazol"));
+        medicalRecord.setAllergies(List.of("nillacilan"));
+
         when(medicalRecordRepository.save(medicalRecord)).thenReturn(medicalRecord);
 
         MedicalRecordModel savedRecord = medicalRecordService.addMedicalRecord(medicalRecord);
@@ -64,6 +70,14 @@ class MedicalRecordServiceTest {
 
     @Test
     void testUpdateMedicalRecord_Success() {
+
+        medicalRecord = new MedicalRecordModel();
+        medicalRecord.setFirstName("John");
+        medicalRecord.setLastName("Boyd");
+        medicalRecord.setBirthdate(LocalDate.of(1984, 3, 6));
+        medicalRecord.setMedications(Arrays.asList("aznol", "hydrapermazol"));
+        medicalRecord.setAllergies(List.of("nillacilan"));
+
         MedicalRecordModel updatedRecord = new MedicalRecordModel();
         updatedRecord.setBirthdate(LocalDate.of(1984, 3, 6));
         updatedRecord.setMedications(List.of("Paracetamol"));
@@ -82,6 +96,14 @@ class MedicalRecordServiceTest {
 
     @Test
     void testUpdateMedicalRecord_NotFound() {
+
+        medicalRecord = new MedicalRecordModel();
+        medicalRecord.setFirstName("John");
+        medicalRecord.setLastName("Boyd");
+        medicalRecord.setBirthdate(LocalDate.of(1984, 3, 6));
+        medicalRecord.setMedications(Arrays.asList("aznol", "hydrapermazol"));
+        medicalRecord.setAllergies(List.of("nillacilan"));
+
         when(medicalRecordRepository.findByFullName("John", "Boyd")).thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class, () -> medicalRecordService.updateMedicalRecord("John", "Boyd", medicalRecord));
@@ -91,6 +113,14 @@ class MedicalRecordServiceTest {
 
     @Test
     void testDeleteMedicalRecord() {
+
+        medicalRecord = new MedicalRecordModel();
+        medicalRecord.setFirstName("John");
+        medicalRecord.setLastName("Boyd");
+        medicalRecord.setBirthdate(LocalDate.of(1984, 3, 6));
+        medicalRecord.setMedications(Arrays.asList("aznol", "hydrapermazol"));
+        medicalRecord.setAllergies(List.of("nillacilan"));
+
         doNothing().when(medicalRecordRepository).deleteByFullName("John", "Boyd");
 
         medicalRecordService.deleteMedicalRecord("John", "Boyd");

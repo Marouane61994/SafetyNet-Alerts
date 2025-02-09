@@ -12,7 +12,6 @@ import com.safetynet.SafetyNetAlerts.Response.ChildAlertResponse;
 import com.safetynet.SafetyNetAlerts.Service.DataLoaderService;
 import com.safetynet.SafetyNetAlerts.Service.FireStationService;
 import com.safetynet.SafetyNetAlerts.Service.PersonService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -51,8 +50,11 @@ class FireStationServiceTest {
     private MedicalRecordModel childMedicalRecord, parentMedicalRecord;
 
 
-    @BeforeEach
-    void setUp() {
+
+
+    @Test
+    void testGetAllFireStations() {
+
 
         fireStation = new FireStationModel();
         fireStation.setAddress("123 Main St");
@@ -74,10 +76,6 @@ class FireStationServiceTest {
         medicalRecord.setMedications(List.of("aznol:350mg",
                 "hydrapermazol:100mg"));
         medicalRecord.setAllergies(List.of("nillacilan"));
-    }
-
-    @Test
-    void testGetAllFireStations() {
 
         when(fireStationRepository.findAll()).thenReturn(List.of(fireStation));
 
@@ -90,6 +88,29 @@ class FireStationServiceTest {
 
     @Test
     void testAddFireStation() {
+
+
+        fireStation = new FireStationModel();
+        fireStation.setAddress("123 Main St");
+        fireStation.setStation("1");
+
+        person = new PersonModel();
+        person.setFirstName("John");
+        person.setLastName("Doe");
+        person.setAddress("123 Main St");
+        person.setCity("Test City");
+        person.setZip("12345");
+        person.setPhone("555-1234");
+        person.setEmail("john.doe@example.com");
+
+        MedicalRecordModel medicalRecord = new MedicalRecordModel();
+        medicalRecord.setFirstName("John");
+        medicalRecord.setFirstName("Boyd");
+        medicalRecord.setBirthdate(LocalDate.parse("1984-06-03"));
+        medicalRecord.setMedications(List.of("aznol:350mg",
+                "hydrapermazol:100mg"));
+        medicalRecord.setAllergies(List.of("nillacilan"));
+
         when(fireStationRepository.save(any(FireStationModel.class))).thenReturn(fireStation);
 
         FireStationModel result = fireStationService.addFireStation(fireStation);
@@ -101,6 +122,29 @@ class FireStationServiceTest {
 
     @Test
     void testUpdateFireStation() {
+
+
+        fireStation = new FireStationModel();
+        fireStation.setAddress("123 Main St");
+        fireStation.setStation("1");
+
+        person = new PersonModel();
+        person.setFirstName("John");
+        person.setLastName("Doe");
+        person.setAddress("123 Main St");
+        person.setCity("Test City");
+        person.setZip("12345");
+        person.setPhone("555-1234");
+        person.setEmail("john.doe@example.com");
+
+        MedicalRecordModel medicalRecord = new MedicalRecordModel();
+        medicalRecord.setFirstName("John");
+        medicalRecord.setFirstName("Boyd");
+        medicalRecord.setBirthdate(LocalDate.parse("1984-06-03"));
+        medicalRecord.setMedications(List.of("aznol:350mg",
+                "hydrapermazol:100mg"));
+        medicalRecord.setAllergies(List.of("nillacilan"));
+
         when(fireStationRepository.findByAddress("123 Main St")).thenReturn(Optional.of(fireStation));
         when(fireStationRepository.save(any(FireStationModel.class))).thenReturn(fireStation);
 
@@ -116,6 +160,29 @@ class FireStationServiceTest {
 
     @Test
     void testDeleteFireStation() {
+
+
+        fireStation = new FireStationModel();
+        fireStation.setAddress("123 Main St");
+        fireStation.setStation("1");
+
+        person = new PersonModel();
+        person.setFirstName("John");
+        person.setLastName("Doe");
+        person.setAddress("123 Main St");
+        person.setCity("Test City");
+        person.setZip("12345");
+        person.setPhone("555-1234");
+        person.setEmail("john.doe@example.com");
+
+        MedicalRecordModel medicalRecord = new MedicalRecordModel();
+        medicalRecord.setFirstName("John");
+        medicalRecord.setFirstName("Boyd");
+        medicalRecord.setBirthdate(LocalDate.parse("1984-06-03"));
+        medicalRecord.setMedications(List.of("aznol:350mg",
+                "hydrapermazol:100mg"));
+        medicalRecord.setAllergies(List.of("nillacilan"));
+
         doNothing().when(fireStationRepository).deleteByAddress("123 Main St");
         fireStationService.deleteFireStation("123 Main St");
         verify(fireStationRepository, times(1)).deleteByAddress("123 Main St");
@@ -125,6 +192,9 @@ class FireStationServiceTest {
     @Test
     void testGetFloodStations() {
 
+        fireStation = new FireStationModel();
+        fireStation.setAddress("123 Main St");
+        fireStation.setStation("1");
 
         person = new PersonModel();
         person.setFirstName("John");
@@ -133,10 +203,8 @@ class FireStationServiceTest {
         person.setCity("Test City");
         person.setZip("12345");
         person.setPhone("555-1234");
+        person.setEmail("john.doe@example.com");
 
-        fireStation = new FireStationModel();
-        fireStation.setAddress("123 Main St");
-        fireStation.setStation("1");
 
         medicalRecord = new MedicalRecordModel();
         medicalRecord.setFirstName("John");
@@ -404,7 +472,6 @@ class FireStationServiceTest {
         verify(personService, times(1)).calculateAge(LocalDate.parse("2015-06-20"));
         verify(personService, times(1)).calculateAge(LocalDate.parse("1980-08-10"));
     }
-
 
 
 }
