@@ -1,11 +1,16 @@
 package com.safetynet.SafetyNetAlerts.Response;
 
-import lombok.Data;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 
 import java.util.List;
 
-@Data
+@ToString
+@Getter
+@Setter
 public class FloodStationResponse {
     private String address;
     private int stationNumber;
@@ -17,7 +22,9 @@ public class FloodStationResponse {
     }
 
 
-    @Data
+    @ToString
+    @Getter
+    @Setter
     public static class ResidentInfo {
         private String firstName;
         private String lastName;

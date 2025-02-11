@@ -5,10 +5,7 @@ import com.safetynet.SafetyNetAlerts.Model.FireStationModel;
 import com.safetynet.SafetyNetAlerts.Model.MedicalRecordModel;
 import com.safetynet.SafetyNetAlerts.Model.PersonModel;
 import com.safetynet.SafetyNetAlerts.Repository.FireStationRepository;
-import com.safetynet.SafetyNetAlerts.Response.FireStationResponse;
-import com.safetynet.SafetyNetAlerts.Response.FloodStationResponse;
-import com.safetynet.SafetyNetAlerts.Response.FireResponse;
-import com.safetynet.SafetyNetAlerts.Response.ChildAlertResponse;
+import com.safetynet.SafetyNetAlerts.Response.*;
 import com.safetynet.SafetyNetAlerts.Service.DataLoaderService;
 import com.safetynet.SafetyNetAlerts.Service.FireStationService;
 import com.safetynet.SafetyNetAlerts.Service.PersonService;
@@ -21,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -48,8 +46,6 @@ class FireStationServiceTest {
     private FireStationModel fireStation;
     private PersonModel child, parent;
     private MedicalRecordModel childMedicalRecord, parentMedicalRecord;
-
-
 
 
     @Test
@@ -292,6 +288,41 @@ class FireStationServiceTest {
         verify(personService, times(1)).calculateAge(LocalDate.parse("1985-05-10"));
     }
 
+    @Test
+    void testGetResidentsByAddress_AddressNotFound() {
+        // Création de la personne
+        person = new PersonModel();
+        person.setFirstName("Alice");
+        person.setLastName("Brown");
+        person.setAddress("456 Elm St");
+        person.setPhone("555-6789");
+
+        // Caserne de pompiers associée à l'adresse
+        fireStation = new FireStationModel();
+        fireStation.setAddress("456 Elm St");
+        fireStation.setStation("2");
+
+        // Dossier médical
+        medicalRecord = new MedicalRecordModel();
+        medicalRecord.setFirstName("Alice");
+        medicalRecord.setLastName("Brown");
+        medicalRecord.setBirthdate(LocalDate.parse("1985-05-10"));
+        medicalRecord.setMedications(List.of("Ibuprofen"));
+        medicalRecord.setAllergies(List.of("Pollen"));
+
+        // Mock du modèle de données
+        dataModel = new DataModel();
+        dataModel.setPersons(List.of(person));
+        dataModel.setFireStation(List.of(fireStation));
+        dataModel.setMedicalRecord(List.of(medicalRecord));
+
+        // Simule le chargement des données
+        when(dataLoaderService.getDataModel()).thenReturn(dataModel);
+
+        Exception exception = assertThrows(RuntimeException.class, () -> fireStationService.getResidentsByAddress("999 Unknown St"));
+
+        assertEquals("Adresse non desservie par une caserne", exception.getMessage());
+    }
 
     @Test
     void testGetChildAlert_WithChildren() {
@@ -403,6 +434,51 @@ class FireStationServiceTest {
     }
 
     @Test
+    void testGetChildAlert_AddressNotFound() {
+
+        // Création de l'enfant (moins de 18 ans)
+        child = new PersonModel();
+        child.setFirstName("Tom");
+        child.setLastName("Smith");
+        child.setAddress("123 Maple St");
+        child.setPhone("555-1234");
+
+        // Création du parent
+        parent = new PersonModel();
+        parent.setFirstName("John");
+        parent.setLastName("Smith");
+        parent.setAddress("123 Maple St");
+        parent.setPhone("555-5678");
+
+        // Dossier médical de l'enfant (né en 2015 → 9 ans)
+        childMedicalRecord = new MedicalRecordModel();
+        childMedicalRecord.setFirstName("Tom");
+        childMedicalRecord.setLastName("Smith");
+        childMedicalRecord.setBirthdate(LocalDate.parse("2015-06-20"));
+
+        // Dossier médical du parent (adulte)
+        parentMedicalRecord = new MedicalRecordModel();
+        parentMedicalRecord.setFirstName("John");
+        parentMedicalRecord.setLastName("Smith");
+        parentMedicalRecord.setBirthdate(LocalDate.parse("1980-08-10"));
+
+        // Mock du modèle de données
+        dataModel = new DataModel();
+        dataModel.setPersons(List.of(child, parent));
+        dataModel.setMedicalRecord(List.of(childMedicalRecord, parentMedicalRecord));
+
+        // Simule le chargement des données
+        when(dataLoaderService.getDataModel()).thenReturn(dataModel);
+
+        List<ChildAlertResponse> response = fireStationService.getChildAlert("999 Unknown St");
+
+        assertNotNull(response);
+        assertTrue(response.isEmpty());
+
+        verify(dataLoaderService, times(1)).getDataModel();
+    }
+
+    @Test
     void testGetPersonsByStationNumber() {
 
         // Création d'un enfant (moins de 18 ans)
@@ -473,6 +549,58 @@ class FireStationServiceTest {
         verify(personService, times(1)).calculateAge(LocalDate.parse("1980-08-10"));
     }
 
+    @Test
+    void testGetPersonsByStationNumber_NoResidents() {
 
+        // Création d'un enfant (moins de 18 ans)
+        child = new PersonModel();
+        child.setFirstName("Alice");
+        child.setLastName("Brown");
+        child.setAddress("456 Oak St");
+        child.setPhone("555-1111");
+
+        // Création d'un adulte
+        parent = new PersonModel();
+        parent.setFirstName("Bob");
+        parent.setLastName("Brown");
+        parent.setAddress("456 Oak St");
+        parent.setPhone("555-2222");
+
+        // Dossier médical de l'enfant (né en 2015 → 9 ans)
+        childMedicalRecord = new MedicalRecordModel();
+        childMedicalRecord.setFirstName("Alice");
+        childMedicalRecord.setLastName("Brown");
+        childMedicalRecord.setBirthdate(LocalDate.parse("2015-06-20"));
+
+        // Dossier médical de l'adulte (né en 1980 → 43 ans)
+        parentMedicalRecord = new MedicalRecordModel();
+        parentMedicalRecord.setFirstName("Bob");
+        parentMedicalRecord.setLastName("Brown");
+        parentMedicalRecord.setBirthdate(LocalDate.parse("1980-08-10"));
+
+        // Caserne de pompiers associée
+        fireStation = new FireStationModel();
+        fireStation.setAddress("456 Oak St");
+        fireStation.setStation("1");
+
+        // Mock du modèle de données
+        dataModel = new DataModel();
+        dataModel.setPersons(List.of(child, parent));
+        dataModel.setMedicalRecord(List.of(childMedicalRecord, parentMedicalRecord));
+        dataModel.setFireStation(List.of(fireStation));
+
+        // Simule le chargement des données
+        when(dataLoaderService.getDataModel()).thenReturn(dataModel);
+
+
+        FireStationResponse response = fireStationService.getPersonsByStationNumber(99);
+
+        assertNotNull(response);
+        assertTrue(response.getPersons().isEmpty());
+        assertEquals(0, response.getChildCount());
+        assertEquals(0, response.getAdultCount());
+
+        verify(dataLoaderService, times(1)).getDataModel();
+    }
 }
 

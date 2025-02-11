@@ -1,11 +1,16 @@
 package com.safetynet.SafetyNetAlerts.Response;
 
 
-import lombok.Data;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 
-@Data
+@ToString
+@Getter
+@Setter
 public class FireStationResponse {
 
     private List<FireStationInfo> persons;
@@ -14,7 +19,9 @@ public class FireStationResponse {
 
 
 
-    @Data
+    @ToString
+    @Getter
+    @Setter
     public static class FireStationInfo {
         private String firstName;
         private String lastName;

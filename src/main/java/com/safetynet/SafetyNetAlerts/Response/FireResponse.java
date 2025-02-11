@@ -1,11 +1,15 @@
 package com.safetynet.SafetyNetAlerts.Response;
 
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 
-@Data
+@ToString
+@Getter
+@Setter
 public class FireResponse {
 
     private String address;

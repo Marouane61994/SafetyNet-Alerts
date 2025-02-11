@@ -37,7 +37,7 @@ public class PersonServiceTest {
 
 
     @Test
-    void ReturnAllPersons() {
+    void TestAllPersons() {
         var person = new PersonModel();
         person.setLastName("John");
         person.setFirstName("Boyd");
@@ -52,12 +52,12 @@ public class PersonServiceTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(person, result.get(0));
+        assertThat(person).isEqualTo(result.get(0)).usingRecursiveComparison();
     }
 
     //  Test addPerson()
     @Test
-    void AddPerson() {
+    void TestAddPerson() {
         var person = new PersonModel();
         person.setLastName("John");
         person.setFirstName("Boyd");
@@ -73,7 +73,7 @@ public class PersonServiceTest {
 
     //  Test updatePerson()
     @Test
-    void UpdatePerson() {
+    void TestUpdatePerson() {
         var person = new PersonModel();
         person.setFirstName("John");
         person.setLastName("Boyd");
@@ -106,7 +106,7 @@ public class PersonServiceTest {
 
     //  Test deletePerson()
     @Test
-    void DeletePerson() {
+    void TestDeletePerson() {
         var person = new PersonModel();
         person.setLastName("John");
         person.setFirstName("Boyd");
@@ -122,7 +122,7 @@ public class PersonServiceTest {
 
     // Test getCommunityEmailsByCity()
     @Test
-    void ReturnEmailsByCity() {
+    void TestReturnEmailsByCity() {
         var person = new PersonModel();
         person.setLastName("John");
         person.setFirstName("Boyd");
@@ -139,9 +139,8 @@ public class PersonServiceTest {
         assertEquals("jaboyd@email.com", emails.get(0));
     }
 
-    // Test getPersonInfoByLastName()
     @Test
-    void ReturnPersonInfoByLastName() {
+    void TestGetPersonInfoByLastName() {
 
         var medicalRecord = new MedicalRecordModel();
         medicalRecord.setFirstName("John");
@@ -151,7 +150,7 @@ public class PersonServiceTest {
                 "hydrapermazol:100mg"));
         medicalRecord.setAllergies(List.of("nillacilan"));
 
-         var person = new PersonModel();
+        var person = new PersonModel();
         person.setFirstName("John");
         person.setLastName("Boyd");
         person.setEmail("jaboyd@email.com");
@@ -176,12 +175,14 @@ public class PersonServiceTest {
 
     //Test calculateAge()
     @Test
-    void CalculateCorrectAge() {
+    void TestCalculateCorrectAge() {
         LocalDate birthDate = LocalDate.of(2000, 2, 1);
         int age = personService.calculateAge(birthDate);
 
         assertEquals(25, age);
     }
+
+
 }
 
 

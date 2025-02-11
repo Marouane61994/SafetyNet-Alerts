@@ -5,33 +5,33 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.safetynet.SafetyNetAlerts.Model.DataModel;
-import lombok.Data;
+
+
+import lombok.Getter;
 
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 
 
-@Data
+@Getter
 @Service
 public class DataLoaderService {
     private DataModel dataModel;
 
-    public DataLoaderService() {
+    public DataLoaderService() throws IOException {
         readJsonFromFile();
 
     }
 
-    public void readJsonFromFile() {
+    public void readJsonFromFile() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.registerModule(new JavaTimeModule());
-        try (InputStream inputStream = getClass().getResourceAsStream("/data.json")) {
+        InputStream inputStream = getClass().getResourceAsStream("/data.json");
             dataModel = objectMapper.readValue(inputStream, DataModel.class);
 
-        } catch (IOException e) {
-            throw new RuntimeException("Error loading JSON data", e);
-        }
+
 
     }
 
@@ -48,8 +48,3 @@ public class DataLoaderService {
     }
 
 }
-
-
-
-
-

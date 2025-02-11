@@ -1,12 +1,17 @@
 package com.safetynet.SafetyNetAlerts.Response;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 
 import java.util.List;
 
 
-@Data
+@ToString
+@Getter
+@Setter
 public class ChildAlertResponse {
 
     private String firstName;
@@ -22,7 +27,9 @@ public class ChildAlertResponse {
     }
 
 
-    @Data
+    @ToString
+    @Getter
+    @Setter
     public static class FamilyMemberInfo {
         private String firstName;
         private String lastName;

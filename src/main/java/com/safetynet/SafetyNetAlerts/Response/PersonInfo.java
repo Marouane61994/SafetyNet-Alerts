@@ -2,15 +2,15 @@ package com.safetynet.SafetyNetAlerts.Response;
 
 
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
+import lombok.*;
 
 
 import java.util.List;
 
 @AllArgsConstructor
-@Data
+
+@Getter
+@Setter
 public class PersonInfo {
     private String firstName;
     private String lastName;
