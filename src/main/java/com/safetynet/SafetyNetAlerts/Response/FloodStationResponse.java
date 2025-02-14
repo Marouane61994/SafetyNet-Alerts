@@ -21,7 +21,6 @@ public class FloodStationResponse {
         this.persons = value;
     }
 
-
     @ToString
     @Getter
     @Setter
@@ -43,7 +42,6 @@ public class FloodStationResponse {
             this.allergies = allergies;
 
         }
-
 
         public ResidentInfo() {
 

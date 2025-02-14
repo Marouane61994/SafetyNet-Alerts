@@ -1,7 +1,6 @@
 package com.safetynet.SafetyNetAlerts.Integration;
 
 
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;

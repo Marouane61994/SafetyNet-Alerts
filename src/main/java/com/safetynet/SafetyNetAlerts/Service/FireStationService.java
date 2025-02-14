@@ -14,6 +14,10 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Service for managing fire stations in the SafetyNet Alerts application.
+ * Provides methods to retrieve and manipulate fire station data, including related persons and emergency responses.
+ */
 @RequiredArgsConstructor
 @Service
 public class FireStationService {
@@ -23,15 +27,33 @@ public class FireStationService {
     private final PersonRepository personRepository;
     private final PersonService personService;
 
-
+    /**
+     * Retrieves a list of all fire stations.
+     *
+     * @return a list of {@link FireStationModel} objects representing all fire stations.
+     */
     public List<FireStationModel> getAllFireStations() {
         return fireStationRepository.findAll();
     }
 
+    /**
+     * Adds a new fire station.
+     *
+     * @param fireStation the {@link FireStationModel} object representing the fire station to be added.
+     * @return the added fire station.
+     */
     public FireStationModel addFireStation(FireStationModel fireStation) {
         return fireStationRepository.save(fireStation);
     }
 
+    /**
+     * Updates an existing fire station by its address.
+     *
+     * @param address           the address of the fire station to update.
+     * @param updatedFireStation the updated {@link FireStationModel} object.
+     * @return the updated fire station.
+     * @throws RuntimeException if the fire station is not found.
+     */
     public FireStationModel updateFireStation(String address, FireStationModel updatedFireStation) {
         FireStationModel existingFireStation = fireStationRepository.findByAddress(address)
                 .orElseThrow(() -> new RuntimeException("FireStation not found with address: " + address));
@@ -41,10 +63,21 @@ public class FireStationService {
         return fireStationRepository.save(existingFireStation);
     }
 
+    /**
+     * Deletes a fire station by its address.
+     *
+     * @param address the address of the fire station to delete.
+     */
     public void deleteFireStation(String address) {
         fireStationRepository.deleteByAddress(address);
     }
 
+    /**
+     * Retrieves a list of residents covered by multiple fire stations (flood stations).
+     *
+     * @param stationNumbers a list of station numbers to fetch residents from.
+     * @return a list of {@link FloodStationResponse} objects containing residents by station.
+     */
     public List<FloodStationResponse> getFloodStations(List<Integer> stationNumbers) {
         // Charger les données
         var dataModel = dataLoaderService.getDataModel();
@@ -52,13 +85,13 @@ public class FireStationService {
                 .map(String::valueOf)
                 .collect(Collectors.toSet());
 
-        // Trouver les adresses associées aux stations
+
         Set<String> addresses = dataModel.getFireStation().stream()
                 .filter(fireStation -> stationNumbersAsString.contains(fireStation.getStation()))
                 .map(FireStationModel::getAddress)
                 .collect(Collectors.toSet());
 
-        // Regrouper les habitants par adresse
+
         Map<String, List<FloodStationResponse.ResidentInfo>> addressToResidents = dataModel.getPersons().stream()
                 .filter(person -> addresses.contains(person.getAddress()))
                 .collect(Collectors.groupingBy(
@@ -79,28 +112,33 @@ public class FireStationService {
                         }, Collectors.toList())
                 ));
 
-        // Construire la liste des réponses
+
         return addressToResidents.entrySet().stream()
                 .map(entry -> new FloodStationResponse(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves fire station details and residents for a given address.
+     *
+     * @param address the address to search for.
+     * @return a {@link FireResponse} containing fire station number and resident details.
+     */
     public FireResponse getResidentsByAddress(String address) {
         var dataModel = dataLoaderService.getDataModel();
 
-        // Récupérer le numéro de caserne pour l'adresse
+
         int stationNumber = Integer.parseInt(dataModel.getFireStation().stream()
                 .filter(fireStation -> fireStation.getAddress().equals(address))
                 .map(FireStationModel::getStation)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Adresse non desservie par une caserne")));
 
-        // Récupérer les habitants de l'adresse
+
         List<FloodStationResponse.ResidentInfo> residents = getResidentInfos(address, dataModel);
 
         return new FireResponse(address, stationNumber, residents);
     }
-
     private List<FloodStationResponse.ResidentInfo> getResidentInfos(String address, DataModel dataModel) {
 
         return dataModel.getPersons().stream()
@@ -125,12 +163,17 @@ public class FireStationService {
                 .collect(Collectors.toList());
     }
 
-
+    /**
+     * Retrieves all phone numbers of residents covered by a specific fire station.
+     *
+     * @param stationNumber the fire station number.
+     * @return a list of unique phone numbers.
+     */
     public List<String> getPhoneNumbersByFireStation(int stationNumber) {
-        // Récupérer les adresses couvertes par la caserne
+
         List<String> coveredAddresses = fireStationRepository.findAddressesByStationNumber(String.valueOf(stationNumber));
 
-        // Filtrer les personnes par adresse et récupérer leurs numéros
+
         return personRepository.findAll().stream()
                 .filter(person -> coveredAddresses.contains(person.getAddress())) // Vérifie si l'adresse est couverte
                 .map(PersonModel::getPhone) // Récupère les numéros de téléphone
@@ -138,23 +181,28 @@ public class FireStationService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves a list of children and their family members living at a given address.
+     *
+     * @param address the address to search for.
+     * @return a list of {@link ChildAlertResponse} objects containing children and their family members.
+     */
     public List<ChildAlertResponse> getChildAlert(String address) {
-        // Charger les données depuis le DataModel
+
         var dataModel = dataLoaderService.getDataModel();
 
-        // Trouver les résidents vivant à l'adresse spécifiée
+
         List<PersonModel> residents = dataModel.getPersons().stream()
                 .filter(person -> person.getAddress().equalsIgnoreCase(address))
                 .toList();
 
-        // Séparer les enfants (<= 18 ans) des autres résidents
         List<ChildAlertResponse.ChildInfo> children = residents.stream()
                 .map(person -> {
                     var medicalRecord = getMedicalRecordModel(person, dataModel);
 
                     int age = medicalRecord.map(record -> personService.calculateAge(record.getBirthdate())).orElse(-1);
 
-                    // Retourner uniquement si la personne est un enfant
+
                     if (age <= 18) {
                         return new ChildAlertResponse.ChildInfo(
                                 person.getFirstName(),
@@ -165,15 +213,14 @@ public class FireStationService {
                     }
                     return null;
                 })
-                .filter(Objects::nonNull) // Supprimer les valeurs null
+                .filter(Objects::nonNull)
                 .toList();
 
-        // Si aucun enfant n'est trouvé, retourner une liste vide
+
         if (children.isEmpty()) {
             return Collections.emptyList();
         }
 
-        // Ajouter les autres résidents comme membres du foyer
         List<ChildAlertResponse.FamilyMemberInfo> familyMembers = residents.stream()
                 .filter(person -> children.stream()
                         .noneMatch(child -> child.getFirstName().equals(person.getFirstName())
@@ -184,7 +231,6 @@ public class FireStationService {
                 ))
                 .collect(Collectors.toList());
 
-        // Construire la réponse pour chaque enfant
         return children.stream()
                 .map(child -> new ChildAlertResponse(
                         child.getFirstName(),
@@ -195,17 +241,20 @@ public class FireStationService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves a list of persons covered by a specific fire station.
+     *
+     * @param stationNumber the fire station number.
+     * @return a {@link FireStationResponse} containing person details and a count of adults and children.
+     */
     public FireStationResponse getPersonsByStationNumber(int stationNumber) {
-        // Charger les données
         var dataModel = dataLoaderService.getDataModel();
 
-        // Récupérer les adresses couvertes par la station
         Set<String> addresses = dataModel.getFireStation().stream()
                 .filter(fireStation -> Integer.parseInt(fireStation.getStation()) == stationNumber)
                 .map(FireStationModel::getAddress)
                 .collect(Collectors.toSet());
 
-        // Récupérer les personnes habitant ces adresses
         List<FireStationResponse.FireStationInfo> persons = dataModel.getPersons().stream()
                 .filter(person -> addresses.contains(person.getAddress()))
                 .map(person -> {
@@ -218,7 +267,6 @@ public class FireStationService {
                 })
                 .collect(Collectors.toList());
 
-        // Calculer le nombre d'adultes et d'enfants
         int adults = 0;
         int children = 0;
         for (PersonModel person : dataModel.getPersons()) {
@@ -235,7 +283,6 @@ public class FireStationService {
                 }
             }
         }
-        // Construire la réponse
         FireStationResponse response = new FireStationResponse();
         response.setPersons(persons);
         response.setAdultCount(adults);
@@ -250,6 +297,4 @@ public class FireStationService {
                         record.getLastName().equals(person.getLastName()))
                 .findFirst();
     }
-
-
 }

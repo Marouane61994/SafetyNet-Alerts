@@ -70,7 +70,7 @@ public class FireStationTest {
     public void testDeleteFireStation() throws Exception {
         mockMvc.perform(delete("/firestation/1509 Culver St"))
                 .andExpect(status().isOk());
-      }
+    }
 
     @Test
     public void testGetFloodStations() throws Exception {
@@ -95,6 +95,7 @@ public class FireStationTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
     }
+
     @Test
     public void getChildAlert() throws Exception {
         mockMvc.perform(get("/childAlert?address=1509 Culver St"))
@@ -102,6 +103,7 @@ public class FireStationTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
     }
+
     @Test
     public void getPersonsCoveredByStation() throws Exception {
         mockMvc.perform(get("/firestation?stationNumber=4"))

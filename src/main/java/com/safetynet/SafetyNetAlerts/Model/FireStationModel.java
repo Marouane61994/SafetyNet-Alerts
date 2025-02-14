@@ -15,7 +15,5 @@ public class FireStationModel {
                 "station='" + station + '\'' +
                 '}';
     }
-
-
 }
 

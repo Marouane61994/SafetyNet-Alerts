@@ -2,13 +2,11 @@ package com.safetynet.SafetyNetAlerts.Repository;
 
 import com.safetynet.SafetyNetAlerts.Model.*;
 import com.safetynet.SafetyNetAlerts.Service.DataLoaderService;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
 
 @RequiredArgsConstructor
 @Repository

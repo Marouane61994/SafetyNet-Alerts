@@ -326,41 +326,35 @@ class FireStationServiceTest {
 
     @Test
     void testGetChildAlert_WithChildren() {
-        // Création de l'enfant (moins de 18 ans)
+
         child = new PersonModel();
         child.setFirstName("Tom");
         child.setLastName("Smith");
         child.setAddress("123 Maple St");
         child.setPhone("555-1234");
 
-        // Création du parent
+
         parent = new PersonModel();
         parent.setFirstName("John");
         parent.setLastName("Smith");
         parent.setAddress("123 Maple St");
         parent.setPhone("555-5678");
 
-        // Dossier médical de l'enfant (né en 2015 → 9 ans)
         childMedicalRecord = new MedicalRecordModel();
         childMedicalRecord.setFirstName("Tom");
         childMedicalRecord.setLastName("Smith");
         childMedicalRecord.setBirthdate(LocalDate.parse("2015-06-20"));
 
-        // Dossier médical du parent (adulte)
         parentMedicalRecord = new MedicalRecordModel();
         parentMedicalRecord.setFirstName("John");
         parentMedicalRecord.setLastName("Smith");
         parentMedicalRecord.setBirthdate(LocalDate.parse("1980-08-10"));
 
-        // Mock du modèle de données
         dataModel = new DataModel();
         dataModel.setPersons(List.of(child, parent));
         dataModel.setMedicalRecord(List.of(childMedicalRecord, parentMedicalRecord));
 
-        // Simule le chargement des données
         when(dataLoaderService.getDataModel()).thenReturn(dataModel);
-
-        // Simule le calcul de l'âge
         when(personService.calculateAge(LocalDate.parse("2015-06-20"))).thenReturn(9);
         when(personService.calculateAge(LocalDate.parse("1980-08-10"))).thenReturn(43);
         List<ChildAlertResponse> response = fireStationService.getChildAlert("123 Maple St");
@@ -384,44 +378,36 @@ class FireStationServiceTest {
 
     @Test
     void testGetChildAlert_NoChildren() {
-        // Création de l'enfant (moins de 18 ans)
+
         child = new PersonModel();
         child.setFirstName("Tom");
         child.setLastName("Smith");
         child.setAddress("123 Maple St");
         child.setPhone("555-1234");
 
-        // Création du parent
         parent = new PersonModel();
         parent.setFirstName("John");
         parent.setLastName("Smith");
         parent.setAddress("123 Maple St");
         parent.setPhone("555-5678");
 
-        // Dossier médical de l'enfant (né en 2015 → 9 ans)
         childMedicalRecord = new MedicalRecordModel();
         childMedicalRecord.setFirstName("Tom");
         childMedicalRecord.setLastName("Smith");
         childMedicalRecord.setBirthdate(LocalDate.parse("2015-06-20"));
 
-        // Dossier médical du parent (adulte)
         parentMedicalRecord = new MedicalRecordModel();
         parentMedicalRecord.setFirstName("John");
         parentMedicalRecord.setLastName("Smith");
         parentMedicalRecord.setBirthdate(LocalDate.parse("1980-08-10"));
 
-        // Mock du modèle de données
         dataModel = new DataModel();
         dataModel.setPersons(List.of(child, parent));
         dataModel.setMedicalRecord(List.of(childMedicalRecord, parentMedicalRecord));
 
-        // Simule le chargement des données
         when(dataLoaderService.getDataModel()).thenReturn(dataModel);
-
-        // Simule le calcul de l'âge
         when(personService.calculateAge(LocalDate.parse("2015-06-20"))).thenReturn(9);
         when(personService.calculateAge(LocalDate.parse("1980-08-10"))).thenReturn(43);
-        // Modifier l'âge de l'enfant pour être un adulte
         when(personService.calculateAge(LocalDate.parse("2015-06-20"))).thenReturn(19);
 
         List<ChildAlertResponse> response = fireStationService.getChildAlert("123 Maple St");
@@ -436,92 +422,76 @@ class FireStationServiceTest {
     @Test
     void testGetChildAlert_AddressNotFound() {
 
-        // Création de l'enfant (moins de 18 ans)
         child = new PersonModel();
         child.setFirstName("Tom");
         child.setLastName("Smith");
         child.setAddress("123 Maple St");
         child.setPhone("555-1234");
 
-        // Création du parent
         parent = new PersonModel();
         parent.setFirstName("John");
         parent.setLastName("Smith");
         parent.setAddress("123 Maple St");
         parent.setPhone("555-5678");
 
-        // Dossier médical de l'enfant (né en 2015 → 9 ans)
         childMedicalRecord = new MedicalRecordModel();
         childMedicalRecord.setFirstName("Tom");
         childMedicalRecord.setLastName("Smith");
         childMedicalRecord.setBirthdate(LocalDate.parse("2015-06-20"));
 
-        // Dossier médical du parent (adulte)
         parentMedicalRecord = new MedicalRecordModel();
         parentMedicalRecord.setFirstName("John");
         parentMedicalRecord.setLastName("Smith");
         parentMedicalRecord.setBirthdate(LocalDate.parse("1980-08-10"));
 
-        // Mock du modèle de données
         dataModel = new DataModel();
         dataModel.setPersons(List.of(child, parent));
         dataModel.setMedicalRecord(List.of(childMedicalRecord, parentMedicalRecord));
 
-        // Simule le chargement des données
         when(dataLoaderService.getDataModel()).thenReturn(dataModel);
 
         List<ChildAlertResponse> response = fireStationService.getChildAlert("999 Unknown St");
 
         assertNotNull(response);
         assertTrue(response.isEmpty());
-
         verify(dataLoaderService, times(1)).getDataModel();
     }
 
     @Test
     void testGetPersonsByStationNumber() {
 
-        // Création d'un enfant (moins de 18 ans)
         child = new PersonModel();
         child.setFirstName("Alice");
         child.setLastName("Brown");
         child.setAddress("456 Oak St");
         child.setPhone("555-1111");
 
-        // Création d'un adulte
         parent = new PersonModel();
         parent.setFirstName("Bob");
         parent.setLastName("Brown");
         parent.setAddress("456 Oak St");
         parent.setPhone("555-2222");
 
-        // Dossier médical de l'enfant (né en 2015 → 9 ans)
         childMedicalRecord = new MedicalRecordModel();
         childMedicalRecord.setFirstName("Alice");
         childMedicalRecord.setLastName("Brown");
         childMedicalRecord.setBirthdate(LocalDate.parse("2015-06-20"));
 
-        // Dossier médical de l'adulte (né en 1980 → 43 ans)
         parentMedicalRecord = new MedicalRecordModel();
         parentMedicalRecord.setFirstName("Bob");
         parentMedicalRecord.setLastName("Brown");
         parentMedicalRecord.setBirthdate(LocalDate.parse("1980-08-10"));
 
-        // Caserne de pompiers associée
         fireStation = new FireStationModel();
         fireStation.setAddress("456 Oak St");
         fireStation.setStation("1");
 
-        // Mock du modèle de données
         dataModel = new DataModel();
         dataModel.setPersons(List.of(child, parent));
         dataModel.setMedicalRecord(List.of(childMedicalRecord, parentMedicalRecord));
         dataModel.setFireStation(List.of(fireStation));
 
-        // Simule le chargement des données
         when(dataLoaderService.getDataModel()).thenReturn(dataModel);
-
-        // Simule le calcul de l'âge
         when(personService.calculateAge(LocalDate.parse("2015-06-20"))).thenReturn(9);
         when(personService.calculateAge(LocalDate.parse("1980-08-10"))).thenReturn(43);
 
@@ -552,46 +522,38 @@ class FireStationServiceTest {
     @Test
     void testGetPersonsByStationNumber_NoResidents() {
 
-        // Création d'un enfant (moins de 18 ans)
         child = new PersonModel();
         child.setFirstName("Alice");
         child.setLastName("Brown");
         child.setAddress("456 Oak St");
         child.setPhone("555-1111");
 
-        // Création d'un adulte
         parent = new PersonModel();
         parent.setFirstName("Bob");
         parent.setLastName("Brown");
         parent.setAddress("456 Oak St");
         parent.setPhone("555-2222");
 
-        // Dossier médical de l'enfant (né en 2015 → 9 ans)
         childMedicalRecord = new MedicalRecordModel();
         childMedicalRecord.setFirstName("Alice");
         childMedicalRecord.setLastName("Brown");
         childMedicalRecord.setBirthdate(LocalDate.parse("2015-06-20"));
 
-        // Dossier médical de l'adulte (né en 1980 → 43 ans)
         parentMedicalRecord = new MedicalRecordModel();
         parentMedicalRecord.setFirstName("Bob");
         parentMedicalRecord.setLastName("Brown");
         parentMedicalRecord.setBirthdate(LocalDate.parse("1980-08-10"));
 
-        // Caserne de pompiers associée
         fireStation = new FireStationModel();
         fireStation.setAddress("456 Oak St");
         fireStation.setStation("1");
 
-        // Mock du modèle de données
         dataModel = new DataModel();
         dataModel.setPersons(List.of(child, parent));
         dataModel.setMedicalRecord(List.of(childMedicalRecord, parentMedicalRecord));
         dataModel.setFireStation(List.of(fireStation));
 
-        // Simule le chargement des données
         when(dataLoaderService.getDataModel()).thenReturn(dataModel);
-
 
         FireStationResponse response = fireStationService.getPersonsByStationNumber(99);
 

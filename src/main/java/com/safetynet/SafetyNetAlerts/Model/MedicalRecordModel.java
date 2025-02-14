@@ -2,7 +2,6 @@ package com.safetynet.SafetyNetAlerts.Model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -15,7 +14,6 @@ public class MedicalRecordModel {
     private String lastName;
     private List<String> medications;
     private List<String> allergies;
-
 
 
     @Override

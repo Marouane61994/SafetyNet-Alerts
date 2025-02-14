@@ -1,7 +1,6 @@
 package com.safetynet.SafetyNetAlerts.Response;
 
 
-
 import lombok.*;
 
 

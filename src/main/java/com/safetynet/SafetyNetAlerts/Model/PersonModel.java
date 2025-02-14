@@ -2,7 +2,6 @@ package com.safetynet.SafetyNetAlerts.Model;
 
 import lombok.Data;
 
-
 @Data
 public class PersonModel {
 
@@ -13,7 +12,6 @@ public class PersonModel {
     private String zip;
     private String phone;
     private String email;
-
 
     public String toString() {
         return "Persons{" +

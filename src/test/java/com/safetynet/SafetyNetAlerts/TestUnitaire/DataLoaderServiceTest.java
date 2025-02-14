@@ -20,34 +20,27 @@ import static org.mockito.Mockito.*;
 class DataLoaderServiceTest {
 
     @Mock
-    private ObjectMapper objectMapper; // Mock ObjectMapper
+    private ObjectMapper objectMapper;
 
     @InjectMocks
-    private DataLoaderService dataLoaderService; // Injecter le mock
+    private DataLoaderService dataLoaderService;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this); // Initialiser les mocks
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
     void testReadJsonFromFile_Success() throws IOException {
-        // Simuler un fichier JSON avec un DataModel factice
+
         DataModel mockDataModel = new DataModel();
         mock(InputStream.class);
 
-        // Simuler la lecture de JSON avec ObjectMapper
         when(objectMapper.readValue(any(InputStream.class), eq(DataModel.class))).thenReturn(mockDataModel);
 
-        // Exécuter la méthode
         dataLoaderService.readJsonFromFile();
 
-        // Vérifier que l'objet DataModel est bien chargé
         assertNotNull(dataLoaderService.getDataModel(), "Le DataModel ne doit pas être null");
     }
-
-
-
-
 }
 

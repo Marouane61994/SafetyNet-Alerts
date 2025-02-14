@@ -55,7 +55,6 @@ public class PersonServiceTest {
         assertThat(person).isEqualTo(result.get(0)).usingRecursiveComparison();
     }
 
-    //  Test addPerson()
     @Test
     void TestAddPerson() {
         var person = new PersonModel();
@@ -71,7 +70,6 @@ public class PersonServiceTest {
         verify(personRepository, times(1)).save(person);
     }
 
-    //  Test updatePerson()
     @Test
     void TestUpdatePerson() {
         var person = new PersonModel();
@@ -104,7 +102,6 @@ public class PersonServiceTest {
         verify(personRepository, times(1)).save(any(PersonModel.class));
     }
 
-    //  Test deletePerson()
     @Test
     void TestDeletePerson() {
         var person = new PersonModel();
@@ -120,7 +117,6 @@ public class PersonServiceTest {
         verify(personRepository, times(1)).deleteByFullName("John", "Boyd");
     }
 
-    // Test getCommunityEmailsByCity()
     @Test
     void TestReturnEmailsByCity() {
         var person = new PersonModel();
@@ -173,7 +169,6 @@ public class PersonServiceTest {
         assertThat(result.get(0).getAllergies()).containsExactlyInAnyOrder("nillacilan");
     }
 
-    //Test calculateAge()
     @Test
     void TestCalculateCorrectAge() {
         LocalDate birthDate = LocalDate.of(2000, 2, 1);
@@ -181,8 +176,6 @@ public class PersonServiceTest {
 
         assertEquals(25, age);
     }
-
-
 }
 
 
