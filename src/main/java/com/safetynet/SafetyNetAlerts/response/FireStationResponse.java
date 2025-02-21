@@ -1,0 +1,21 @@
+package com.safetynet.SafetyNetAlerts.response;
+
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+import java.util.List;
+
+@ToString
+@Getter
+@Setter
+public class FireStationResponse {
+
+    private List<FireStationInfo> persons;
+    private int adultCount;
+    private int childCount;
+
+
+
+}
